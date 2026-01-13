@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/tushnikbiswas/springboot-cicd.git'
+            }
+        }
+
+        stage('Build with Maven') {
+            steps {
+                sh 'mvn clean package -f app/pom.xml'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t springboot-tomcat .'
+            }
+        }
+
+        stage('Deploy Container') {
+            steps {
+                sh '''
+                docker stop springboot-app || true
+                docker rm springboot-app || true
+                docker run -d -p 8080:8080 --name springboot-app springboot-tomcat
+                '''
+            }
+        }
+    }
+}
