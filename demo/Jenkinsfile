@@ -10,19 +10,19 @@ pipeline {
 
         stage('Build with Maven') {
             steps {
-                sh 'mvn clean package -f app/pom.xml'
+                bat 'mvn clean package -f app/pom.xml'
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t springboot-tomcat .'
+                bat 'docker build -t springboot-tomcat .'
             }
         }
 
         stage('Deploy Container') {
             steps {
-                sh '''
+                bat '''
                 docker stop springboot-app || true
                 docker rm springboot-app || true
                 docker run -d -p 8080:8080 --name springboot-app springboot-tomcat
